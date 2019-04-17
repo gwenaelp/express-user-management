@@ -8,10 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.utopland.net:gwenaelp/express-mongo-auth.git"
   },
   "author": "",
-  "license": "ISC",
   "devDependencies": {
     "axios": "^0.18.0",
     "chalk": "^2.4.2",
