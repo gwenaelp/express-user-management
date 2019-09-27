@@ -32,7 +32,7 @@ class UsersSchema {
       username: this.username,
       id: this._id,
       exp: parseInt(expirationDate.getTime() / 1000, 10),
-    }, 'secret');
+    }, process.env.JWT_SECRET);
   }
 
   toAuthJSON() {
