@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const optionsManager = require('../options');
 
 class UsersSchema {
   //email: '',
@@ -32,7 +33,7 @@ class UsersSchema {
       username: this.username,
       id: this._id,
       exp: parseInt(expirationDate.getTime() / 1000, 10),
-    }, process.env.JWT_SECRET);
+    }, optionsManager.get().jwtSecret);
   }
 
   toAuthJSON() {
