@@ -3,6 +3,7 @@
 const defaultOptions = {
   adapter: 'passport-mongo',
   usersTable: 'users',
+  jwtSecret: undefined,
   apiKey: {
     table: 'projects',
     documentKey: 'apiKey.apiKey',

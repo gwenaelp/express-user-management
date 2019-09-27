@@ -37,6 +37,19 @@ module.exports = {
     app.use(passport.initialize());
     app.use(passport.session());
 
+    this.auth.required = jwt({
+      secret: optionsManager.get().jwtSecret,
+      userProperty: 'user',
+      getToken: getTokenFromHeaders,
+    });
+
+    this.auth.optional = jwt({
+      secret: optionsManager.get().jwtSecret,
+      userProperty: 'user',
+      getToken: getTokenFromHeaders,
+      credentialsRequired: false,
+    });
+
     passport.use(new LocalStrategy({}, function(username, password, done) {
       const db = dbObject.db;
       db.collection(options.usersTable).find({ username }).toArray((err, user) => {
@@ -70,17 +83,6 @@ module.exports = {
   deleteAccountRoute,
 
   auth: {
-    required: jwt({
-      secret: 'secret',
-      userProperty: 'user',
-      getToken: getTokenFromHeaders,
-    }),
-    optional: jwt({
-      secret: 'secret',
-      userProperty: 'user',
-      getToken: getTokenFromHeaders,
-      credentialsRequired: false,
-    }),
     apiKey: (req, res, next) => {
       const options = optionsManager.get();
 
