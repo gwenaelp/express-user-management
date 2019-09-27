@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 
 const adapters = {
   'passport-mongo': require('./adapters/passport-mongo'),
+  'passport-postgre': require('./adapters/passport-postgre'),
 }
 
 module.exports = {
