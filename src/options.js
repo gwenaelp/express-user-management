@@ -4,6 +4,7 @@ const defaultOptions = {
   adapter: 'passport-mongo',
   usersTable: 'users',
   jwtSecret: undefined,
+  additionalTokenKeys: [],
   apiKey: {
     table: 'projects',
     documentKey: 'apiKey.apiKey',

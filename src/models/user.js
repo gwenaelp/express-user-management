@@ -28,12 +28,21 @@ class UsersSchema {
     const expirationDate = new Date(today);
     expirationDate.setDate(today.getDate() + 60);
 
-    return jwt.sign({
+    const tokenObject = {
       email: this.email,
       username: this.username,
       id: this._id,
       exp: parseInt(expirationDate.getTime() / 1000, 10),
-    }, optionsManager.get().jwtSecret);
+    };
+
+    const additionalTokenKeys = optionsManager.get().additionalTokenKeys;
+    if(additionalTokenKeys) {
+      for (var i = 0; i < additionalTokenKeys.length; i++) {
+        tokenObject[additionalTokenKeys[i]] = this[additionalTokenKeys[i]];
+      }
+    }
+
+    return jwt.sign(tokenObject, optionsManager.get().jwtSecret);
   }
 
   toAuthJSON() {
