@@ -16,8 +16,13 @@ module.exports = (req, res, next) => {
       db.collection(options.usersTable).update({
         username: req.user.username,
       }, user, (err, user) => {
+        if (err) {
+          res.send({ success: false, error: err });
+        }
         res.send({ success: true });
       });
+    } else {
+      res.send({ success: false, error: 'Password incorrect' });
     }
   });
 };

@@ -11,7 +11,6 @@ module.exports = {
     optionsManager.init(userOptions);
     const options = optionsManager.get();
     console.log('OPTIONS', options);
-    expressApp.use(bodyParser.json({ limit: '5mb' }));
 
     const adapter = adapters[options.adapter];
     adapter.init(expressApp, options);
