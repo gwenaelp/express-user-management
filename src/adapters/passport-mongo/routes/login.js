@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
 
 
   return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-    if(passportUser.success === false) {
+    if(passportUser && passportUser.success === false) {
       return res.status(422).json(passportUser);
     }
     if(err) {
