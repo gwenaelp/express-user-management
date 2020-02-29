@@ -52,6 +52,9 @@ module.exports = {
 
     passport.use(new LocalStrategy({}, function(username, password, done) {
       const db = dbObject.db;
+      if (!db || !db.collection) {
+        return done(null, { success: false, error: 'Impossible to connect to the database.' });
+      }
       db.collection(options.usersTable).find({ username }).toArray((err, user) => {
         if (err) { return done(err); }
         if (!user || user.length < 1) { return done(null, { success: false, error: 'Impossible to login with those credentials.' }); }
