@@ -1,5 +1,7 @@
 let optionsManager = require('./options');
 const bodyParser = require("body-parser");
+const revokeToken = require("./revokeToken");
+const listTokens = require("./listTokens");
 
 const adapters = {
   'passport-mongo': require('./adapters/passport-mongo'),
@@ -22,7 +24,11 @@ module.exports = {
     expressApp.post('/resetPassword/:token', adapter.resetPasswordRoute);
     expressApp.post('/changePassword', adapter.auth.required, adapter.changePasswordRoute);
     expressApp.post('/deleteAccount', adapter.auth.optional, adapter.deleteAccountRoute);
-
+    if (options.tokenRevocation) {
+      console.log('tokenRevocation');
+      expressApp.get('/revokeToken/:token', adapter.auth.required, revokeToken);
+      expressApp.get('/listTokens', adapter.auth.required, listTokens);
+    }
     this.auth = adapter.auth;
 	},
 };
