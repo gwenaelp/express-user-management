@@ -12,7 +12,9 @@ module.exports = {
 	init(expressApp, userOptions) {
     optionsManager.init(userOptions);
     const options = optionsManager.get();
-    console.log('OPTIONS', options);
+    if (process.env.DEBUG) {
+      console.log('OPTIONS', options);
+    }
 
     const adapter = adapters[options.adapter];
     adapter.init(expressApp, options);
@@ -25,7 +27,6 @@ module.exports = {
     expressApp.post('/changePassword', adapter.auth.required, adapter.changePasswordRoute);
     expressApp.post('/deleteAccount', adapter.auth.optional, adapter.deleteAccountRoute);
     if (options.tokenRevocation) {
-      console.log('tokenRevocation');
       expressApp.get('/revokeToken/:token', adapter.auth.required, revokeToken);
       expressApp.get('/listTokens', adapter.auth.required, listTokens);
     }

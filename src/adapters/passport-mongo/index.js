@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const dbObject = require('./db');
-const jwt = require('express-jwt');
+const jwt = require('../../express-jwt');
 
 const loginRoute = require('./routes/login');
 const registerRoute = require('./routes/register');
@@ -15,14 +15,15 @@ const optionsManager = require('../../options');
 const generatePassword = require('../../utils/generatePassword');
 const tokenExpirationManager = require('../../tokenExpirationManager');
 
-const getTokenFromHeaders = (req) => {
+const getTokenFromHeaders = async (req) => {
   const { headers: { authorization } } = req;
   const options = optionsManager.get();
 
   if(authorization && authorization.split(' ')[0] === 'Token') {
     const usertoken = authorization.split(' ')[1];
     if (options.tokenRevocation) {
-      if (tokenExpirationManager.isTokenValid(usertoken)) {
+      const isTokenValid = await tokenExpirationManager.isTokenValid(usertoken);
+      if (isTokenValid) {
         return usertoken;
       } else {
         return null;
