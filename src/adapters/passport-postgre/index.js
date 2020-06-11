@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const dbObject = require('./db');
-const jwt = require('express-jwt');
+const jwt = require('../../express-jwt');
 
 const loginRoute = require('./routes/login');
 const registerRoute = require('./routes/register');

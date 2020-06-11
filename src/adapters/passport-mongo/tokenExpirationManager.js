@@ -10,8 +10,8 @@ module.exports = {
         );
     },
     async isTokenValid(tokenToCheck) {
-        const token = this.getCollection().findOne({_id: tokenToCheck});
-        if (token !== undefined) {
+        const token = await this.getCollection().findOne({_id: tokenToCheck });
+        if (!!token) {
             await this.getCollection().updateOne(
                 { _id: tokenToCheck },
                 { $set: { lastUsed : new Date().toJSON() } }
@@ -22,12 +22,8 @@ module.exports = {
         }
     },
     async listTokens() {
-        const tokens = {};
-        const mongoTokens = await this.getCollection().find({ });
-        for (let tokenDocument of mongoTokens) {
-            tokens[tokenDocument.token] = tokenDocument;
-        }
-        return this.tokens;
+        const tokenDocuments = await this.getCollection().find().toArray();
+        return tokenDocuments;
     },
     async revokeToken(token) {
         await this.getCollection().deleteOne({_id: token});

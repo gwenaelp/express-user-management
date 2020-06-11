@@ -12,8 +12,8 @@ module.exports = {
             return false;
         }
     },
-    listTokens() {
-        return this.tokens;
+    async listTokens() {
+        return await this.tokens;
     },
     revokeToken(token) {
         console.log('revoke token', this.tokens[token]);
