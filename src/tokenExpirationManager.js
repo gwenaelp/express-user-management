@@ -14,7 +14,6 @@ module.exports = {
   },
   async listTokens() {
     const tokens = await this.getManager().listTokens();
-    console.log('listTokens', tokens);
     return tokens;
   },
   revokeToken(token) {

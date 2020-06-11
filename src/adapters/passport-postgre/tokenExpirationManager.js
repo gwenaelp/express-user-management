@@ -16,7 +16,6 @@ module.exports = {
         return await this.tokens;
     },
     revokeToken(token) {
-        console.log('revoke token', this.tokens[token]);
         delete this.tokens[token];
     }
 }
