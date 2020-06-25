@@ -1,19 +1,21 @@
+const optionsManager = require('../../options');
+
 module.exports = {
     getCollection() {
-        return require("./db").collection("user-token");
+        return require("./db").collection(optionsManager.get().tokensCollection);
     },
     async newTokenForUser(username, token) {
         await this.getCollection().updateOne(
-            { _id: token },
+            { token },
             { $set: { username, since: new Date().toJSON() } },
             { upsert: true }
         );
     },
     async isTokenValid(tokenToCheck) {
-        const token = await this.getCollection().findOne({_id: tokenToCheck });
+        const token = await this.getCollection().findOne({token: tokenToCheck });
         if (!!token) {
             await this.getCollection().updateOne(
-                { _id: tokenToCheck },
+                { token: tokenToCheck },
                 { $set: { lastUsed : new Date().toJSON() } }
             );
             return true;
@@ -26,6 +28,6 @@ module.exports = {
         return tokenDocuments;
     },
     async revokeToken(token) {
-        await this.getCollection().deleteOne({_id: token});
+        await this.getCollection().deleteOne({ token });
     }
 }

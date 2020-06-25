@@ -14,6 +14,7 @@ const defaultOptions = {
   accountActivationAdress: 'http://localhost:30000/activate',
   nodeMailerConfig: undefined,
   activationRequired: true,
+  tokensCollection: 'user-token',
   mails: {
     activation: {
       subject: 'Activate your account!',
