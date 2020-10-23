@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
         let user = docs[0];
         if (!user) {
           //req.flash('error', 'No account with that email address exists.');
+          console.error('no user found for this email adress');
           return res.redirect('/forgot');
         }
         user.resetPasswordToken = token;
@@ -32,7 +33,7 @@ module.exports = (req, res, next) => {
         });
       });
     },
-    (token, user, done) => {
+    async (token, user, done) => {
       const mailBodyTemplate = Handlebars.compile(options.mails.passwordReset.body);
 
       var mailOptions = {
@@ -45,14 +46,18 @@ module.exports = (req, res, next) => {
         }),
       };
 
-      mailer.send(mailOptions, function(err) {
-        console.log('mail sent');
-      });
+      try {
+        await mailer.send(mailOptions);
+      } catch (e) {
+        console.error('forgot password error', e);
+        res.send({ success: false, error: e });
+        return;
+      }
 
       res.send({ success: true });
     }
   ], function(err) {
-    if (err) return next(err);
-    res.redirect('/forgot');
+    // if (err) return next(err);
+    // res.redirect('/forgot');
   });
 };

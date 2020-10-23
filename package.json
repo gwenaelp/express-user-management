@@ -18,6 +18,7 @@
     "minimist": "^1.2.0"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.2.6",
     "async": "^2.6.3",
     "body-parser": "^1.18.3",
     "crypto": "^1.0.1",
