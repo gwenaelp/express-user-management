@@ -44,7 +44,7 @@ const getApiKeyFromHeaders = (req) => {
 };
 
 module.exports = {
-  init(app, options) {
+  async init(app, options) {
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -85,7 +85,7 @@ module.exports = {
       });
     }));
 
-    dbObject.init(options);
+    await dbObject.init(options);
   },
 
   loginRoute,
