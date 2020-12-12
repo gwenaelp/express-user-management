@@ -9,7 +9,7 @@ const adapters = {
 }
 
 module.exports = {
-	init(expressApp, userOptions) {
+  async init(expressApp, userOptions) {
     optionsManager.init(userOptions);
     const options = optionsManager.get();
     if (process.env.DEBUG) {
@@ -17,7 +17,7 @@ module.exports = {
     }
 
     const adapter = adapters[options.adapter];
-    adapter.init(expressApp, options);
+    await adapter.init(expressApp, options);
 
     expressApp.post('/login', adapter.loginRoute);
     expressApp.post('/register', adapter.registerRoute);
@@ -31,5 +31,5 @@ module.exports = {
       expressApp.get('/listTokens', adapter.auth.required, listTokens);
     }
     this.auth = adapter.auth;
-	},
+  },
 };
