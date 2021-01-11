@@ -28,8 +28,9 @@ const getTokenFromHeaders = async (req) => {
       } else {
         return null;
       }
+    } else {
+      return usertoken;
     }
-    return usertoken;
   }
   return null;
 };
@@ -86,6 +87,14 @@ module.exports = {
     }));
 
     await dbObject.init(options);
+
+    module.exports = () => {
+      setInterval(async () => {
+        const lastweek = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+        await dbObject.collection('user-token').deleteMany({ lastUsed: { $lt: lastweek.toJSON() } });
+        console.log('cleaned session tokens');
+      }, options.tokenExpirationTime);
+    };
   },
 
   loginRoute,
