@@ -15,6 +15,7 @@ const defaultOptions = {
   nodeMailerConfig: undefined,
   activationRequired: true,
   tokensCollection: 'user-token',
+  tokenExpirationTime:  1000 * 60 * 60 * 24,
   mails: {
     activation: {
       subject: 'Activate your account!',

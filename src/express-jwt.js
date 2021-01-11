@@ -1,3 +1,6 @@
+const db = require('./adapters/passport-mongo/db');
+const optionsManager = require('./options');
+
 function UnauthorizedError (code, error) {
   this.name = "UnauthorizedError";
   this.message = error.message;
@@ -56,7 +59,28 @@ module.exports = function(options) {
         return next();
       }
     }
+    var parts = req.headers.authorization.split(' ');
 
+    var scheme;
+    var credentials;
+    if(parts.length === 2) {
+      scheme = parts[0];
+      credentials = parts[1];
+      if (/^ApiKey$/i.test(scheme)) {
+        const appOptions = optionsManager.get();
+        const userFound = await db.collection(appOptions.usersTable).find({ apiKeys: credentials }).toArray();
+        if (userFound.length === 1) {
+          if (_resultProperty) {
+            set(res, _resultProperty, userFound[0]);
+          } else {
+            set(req, _requestProperty, userFound[0]);
+          }
+          return next();
+        } else {
+          return next(new UnauthorizedError('invalid_token', { message: 'Invalid API key' }));
+        }
+      }
+    }
     if (options.getToken && typeof options.getToken === 'function') {
       try {
         token = options.getToken(req);
@@ -68,7 +92,6 @@ module.exports = function(options) {
         return next(e);
       }
     } else if (req.headers && req.headers.authorization) {
-      var parts = req.headers.authorization.split(' ');
       if (parts.length == 2) {
         var scheme = parts[0];
         var credentials = parts[1];
