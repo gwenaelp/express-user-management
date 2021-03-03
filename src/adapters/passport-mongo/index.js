@@ -67,7 +67,7 @@ module.exports = {
       if (!db || !db.collection) {
         return done(null, { success: false, error: 'Impossible to connect to the database.' });
       }
-      db.collection(options.usersTable).find({ username }).toArray((err, user) => {
+      db.collection(options.usersTable).find({ $or: [{ username:username}, { email:username }] }).toArray((err, user) => {
         if (err) { return done(err); }
         if (!user || user.length < 1) { return done(null, { success: false, error: 'Impossible to login with those credentials.' }); }
         if (user[0].activated !== true) { return done(null, { success: false, error: 'User not activated.' }); }
