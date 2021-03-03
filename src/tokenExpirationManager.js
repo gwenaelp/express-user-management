@@ -6,8 +6,8 @@ module.exports = {
       'passport-postgre': require('./adapters/passport-postgre/tokenExpirationManager'),
     }[adapter];
   },
-  newTokenForUser(username, token) {
-    return this.getManager().newTokenForUser(username, token);
+  newTokenForUser(username, token, deviceDetect) {
+    return this.getManager().newTokenForUser(username, token, deviceDetect);
   },
   isTokenValid(tokenToCheck) {
     return this.getManager().isTokenValid(tokenToCheck);
