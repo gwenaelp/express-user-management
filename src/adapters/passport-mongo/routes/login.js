@@ -2,6 +2,7 @@ const passport = require('passport');
 const User = require('../../../models/user');
 const tokenExpirationManager = require('../../../tokenExpirationManager');
 const optionsManager = require('../../../options');
+const MobileDetect = require('mobile-detect');
 
 module.exports = (req, res, next) => {
   const options = optionsManager.get();
@@ -25,7 +26,8 @@ module.exports = (req, res, next) => {
       const user = new User(passportUser);
       user.token = user.generateJWT();
       if (options.tokenRevocation) {
-        tokenExpirationManager.newTokenForUser(user.username, user.token);
+        console.log('header', req.headers['user-agent'], new MobileDetect(req.headers['user-agent']));
+        tokenExpirationManager.newTokenForUser(user.username, user.token, new MobileDetect(req.headers['user-agent']));
       }
       return res.json({
         success: true,

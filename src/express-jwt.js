@@ -59,7 +59,8 @@ module.exports = function(options) {
         return next();
       }
     }
-    var parts = req.headers.authorization.split(' ');
+    var authHeader = req.headers.authorization || '';
+    var parts = authHeader.split(' ');
 
     var scheme;
     var credentials;

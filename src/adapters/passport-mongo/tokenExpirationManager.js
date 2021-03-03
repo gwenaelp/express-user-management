@@ -4,10 +4,20 @@ module.exports = {
     getCollection() {
         return require("./db").collection(optionsManager.get().tokensCollection);
     },
-    async newTokenForUser(username, token) {
+    async newTokenForUser(username, token, deviceDetect) {
+      console.log('deviceDetect', deviceDetect, deviceDetect.os());
         await this.getCollection().updateOne(
             { token },
-            { $set: { username, since: new Date().toJSON() } },
+            {
+              $set: {
+                username, since: new Date().toJSON(),
+                device: {
+                  os: deviceDetect.os(),
+                  mobile: deviceDetect.mobile(),
+                  tablet: deviceDetect.tablet()
+                }
+              } 
+            },
             { upsert: true }
         );
     },
