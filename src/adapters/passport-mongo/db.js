@@ -12,7 +12,7 @@ const dbObject = {
       if(!options.mongoUrl) {
         options.mongoUrl = process.env.MONGO_URL;
       }
-      MongoClient.connect(options.mongoUrl, { useNewUrlParser: true }, (err, client) => {
+      MongoClient.connect(options.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if(err) {
           console.error(err.toString());
           reject(err.toString());
