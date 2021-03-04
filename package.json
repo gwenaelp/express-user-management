@@ -1,6 +1,6 @@
 {
   "name": "express-user-management",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "A ready-to-use express middleware for authentication.",
   "main": "src/index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "handlebars": "^4.3.3",
     "jsonwebtoken": "^8.5.1",
     "lodash.set": "^4.3.2",
+    "mobile-detect": "^1.4.4",
     "mongodb": "^3.2.2",
     "nodemailer": "^6.0.0",
     "passport": "^0.4.0",
