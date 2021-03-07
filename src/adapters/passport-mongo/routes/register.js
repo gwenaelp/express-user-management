@@ -12,11 +12,10 @@ const createInDb = (user) => {
     try {
       //TODO check collection name in options
       const usersCollection = db.collection(options.usersTable);
-
       usersCollection.find({
         $or: [{ email: user.email }, { username: user.username }]
       }).toArray((err, docs) => {
-        if(docs.length > 0) {
+        if(!docs || docs.length > 0) {
           reject({ success: false, error: 'Username or mail already taken' });
         } else {
           //TODO add hooks to options
@@ -39,7 +38,7 @@ const createInDb = (user) => {
             salt: user.salt,
           };
 
-          usersCollection.insert(userDocument, (err, newDoc) => {
+          usersCollection.insertOne(userDocument, (err, newDoc) => {
             if(err) reject(err);
             resolve(userDocument);
           });
@@ -104,5 +103,5 @@ module.exports = (req, res, next) => {
         user: finalUser.toAuthJSON()
       });
     })
-    .catch((err) => res.json(err));
+    .catch((err) => res.status(422).json(err));
 };
