@@ -15,7 +15,7 @@ const createInDb = (user) => {
       usersCollection.find({
         $or: [{ email: user.email }, { username: user.username }]
       }).toArray((err, docs) => {
-        if(!docs || docs.length > 0) {
+        if(docs && docs.length > 0) {
           reject({ success: false, error: 'Username or mail already taken' });
         } else {
           //TODO add hooks to options
