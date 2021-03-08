@@ -18,8 +18,9 @@ const dbObject = {
           reject(err.toString());
         } else {
           const urlSplit = options.mongoUrl.split('/');
-          console.log("Connected successfully to server", urlSplit[urlSplit.length - 1]);
-          db = client.db(urlSplit[urlSplit.length - 1]);
+          const databaseName = urlSplit[urlSplit.length - 1].split('?')[0]
+          console.log("Connected successfully to database", databaseName);
+          db = client.db(databaseName);
           dbObject.db = db;
           resolve(db);
         }
