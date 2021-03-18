@@ -12,14 +12,14 @@ const dbObject = {
       if(!options.mongoUrl) {
         options.mongoUrl = process.env.MONGO_URL;
       }
-      MongoClient.connect(options.mongoUrl, { useNewUrlParser: true }, (err, client) => {
+      MongoClient.connect(options.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if(err) {
           console.error(err.toString());
           reject(err.toString());
         } else {
           const urlSplit = options.mongoUrl.split('/');
           const databaseName = urlSplit[urlSplit.length - 1].split('?')[0]
-          console.log("Connected successfully to database", databaseName);
+          console.log("Express user management: connected successfully to database", databaseName);
           db = client.db(databaseName);
           dbObject.db = db;
           resolve(db);
