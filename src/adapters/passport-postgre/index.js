@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const dbObject = require('./db');
-const jwt = require('../../express-jwt');
+const jwt = require('../../utils/getExpressJwt');
 
 const loginRoute = require('./routes/login');
 const registerRoute = require('./routes/register');
@@ -41,6 +41,7 @@ module.exports = {
       secret: optionsManager.get().jwtSecret,
       userProperty: 'user',
       getToken: getTokenFromHeaders,
+      algorithms: ['HS256']
     });
 
     this.auth.optional = jwt({
@@ -48,6 +49,7 @@ module.exports = {
       userProperty: 'user',
       getToken: getTokenFromHeaders,
       credentialsRequired: false,
+      algorithms: ['HS256']
     });
 
     passport.use(new LocalStrategy({}, (username, password, done) => {

@@ -1,0 +1,1 @@
+module.exports = process.env.CUSTOM_EXPRESS_JWT ? require("../express-jwt") : require("express-jwt");
