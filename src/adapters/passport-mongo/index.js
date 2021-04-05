@@ -14,15 +14,16 @@ const deleteAccountRoute = require('./routes/deleteAccount');
 const optionsManager = require('../../options');
 const generatePassword = require('../../utils/generatePassword');
 const tokenExpirationManager = require('../../tokenExpirationManager');
+const sync = require('promise-synchronizer');
 
-const getTokenFromHeaders = async (req) => {
+const getTokenFromHeaders = (req) => {
   const { headers: { authorization } } = req;
   const options = optionsManager.get();
 
   if(authorization && authorization.split(' ')[0] === 'Token') {
     const usertoken = authorization.split(' ')[1];
     if (options.tokenRevocation) {
-      const isTokenValid = await tokenExpirationManager.isTokenValid(usertoken);
+      const isTokenValid = sync(tokenExpirationManager.isTokenValid)(usertoken, tokenExpirationManager);
       if (isTokenValid) {
         return usertoken;
       } else {
