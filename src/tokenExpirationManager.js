@@ -9,8 +9,11 @@ module.exports = {
   newTokenForUser(username, token, deviceDetect) {
     return this.getManager().newTokenForUser(username, token, deviceDetect);
   },
-  isTokenValid(tokenToCheck) {
-    return this.getManager().isTokenValid(tokenToCheck);
+  isTokenValid(tokenToCheck, _this) {
+    if (_this === undefined) {
+      _this = this;
+    }
+    return _this.getManager().isTokenValid(tokenToCheck);
   },
   async listTokens() {
     const tokens = await this.getManager().listTokens();
