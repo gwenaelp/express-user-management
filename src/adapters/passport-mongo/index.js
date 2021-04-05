@@ -53,6 +53,7 @@ module.exports = {
       secret: optionsManager.get().jwtSecret,
       userProperty: 'user',
       getToken: getTokenFromHeaders,
+      algorithms: ['HS256']
     });
 
     this.auth.optional = jwt({
@@ -60,6 +61,7 @@ module.exports = {
       userProperty: 'user',
       getToken: getTokenFromHeaders,
       credentialsRequired: false,
+      algorithms: ['HS256']
     });
 
     passport.use(new LocalStrategy({}, function(username, password, done) {
