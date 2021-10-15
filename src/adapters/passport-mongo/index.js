@@ -17,13 +17,18 @@ const tokenExpirationManager = require('../../tokenExpirationManager');
 const sync = require('promise-synchronizer');
 
 const getTokenFromHeaders = (req) => {
-  const { headers: { authorization } } = req;
+  console.log('>>> getTokenFromHeaders @1', req.headers.authorization);
+  const authorization = req.headers.authorization;
   const options = optionsManager.get();
 
   if(authorization && authorization.split(' ')[0] === 'Token') {
+
+    console.log('>>> getTokenFromHeaders @2', authorization);
     const usertoken = authorization.split(' ')[1];
     if (options.tokenRevocation) {
+      console.log('willSync');
       const isTokenValid = sync(tokenExpirationManager.isTokenValid)(usertoken, tokenExpirationManager);
+      console.log('didSync');
       if (isTokenValid) {
         return usertoken;
       } else {
@@ -39,7 +44,7 @@ const getTokenFromHeaders = (req) => {
 const getApiKeyFromHeaders = (req) => {
   const { headers: { authorization } } = req;
 
-  if(authorization && authorization.split(' ')[0] === 'ApiKey') {
+  if(authorization && authorization.split(' ')[0] === 'apiKey' || authorization && authorization.split(' ')[0] === 'ApiKey') {
     return authorization.split(' ')[1];
   }
   return null;
@@ -49,14 +54,19 @@ module.exports = {
   async init(app, options) {
     app.use(passport.initialize());
     app.use(passport.session());
-
-    this.auth.required = jwt({
-      secret: optionsManager.get().jwtSecret,
-      userProperty: 'user',
-      getToken: getTokenFromHeaders,
-      algorithms: ['HS256']
-    });
-
+    this.auth.required = (req, res, next) => {
+      const authorization = req.headers.authorization;
+      if(authorization && authorization.split(' ')[0] === 'Token') {
+        jwt({
+          secret: optionsManager.get().jwtSecret,
+          userProperty: 'user',
+          getToken: getTokenFromHeaders,
+          algorithms: ['HS256']
+        })(req, res, next);
+      } else if(authorization && authorization.split(' ')[0] === 'apiKey') {
+        this.auth.apiKey(req, res, next);
+      }
+    };
     this.auth.optional = jwt({
       secret: optionsManager.get().jwtSecret,
       userProperty: 'user',
@@ -67,6 +77,7 @@ module.exports = {
 
     passport.use(new LocalStrategy({}, function(username, password, done) {
       const db = dbObject.db;
+      console.log('>>> passport strat');
       if (!db || !db.collection) {
         return done(null, { success: false, error: 'Impossible to connect to the database.' });
       }
@@ -115,16 +126,18 @@ module.exports = {
       const apiKey = getApiKeyFromHeaders(req);
       if(apiKey) {
         const db = dbObject.db;
+        console.log('search apiKey: ' +options.apiKey.table +','+options.apiKey.documentKey);
         db.collection(options.apiKey.table).find({ [options.apiKey.documentKey]: apiKey }).toArray((err, docs) => {
           if(docs && docs.length) {
             req.apiKeyDocument = docs[0];
+            req.user = docs[0];
             next(null, docs[0]);
           } else {
-            res.send({ success: false, error: 'Incorrect API key provided' });
+            res.status(422).send({ success: false, error: 'Incorrect API key provided:' + apiKey});
           }
         });
       } else {
-        res.send({ success: false, error: 'No API key provided' });
+        res.status(500).send({ success: false, error: 'No API key provided' });
       }
     },
   },

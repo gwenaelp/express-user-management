@@ -26,7 +26,6 @@ module.exports = (req, res, next) => {
       const user = new User(passportUser);
       user.token = user.generateJWT();
       if (options.tokenRevocation) {
-        console.log('header', req.headers['user-agent'], new MobileDetect(req.headers['user-agent']));
         tokenExpirationManager.newTokenForUser(user.username, user.token, new MobileDetect(req.headers['user-agent']));
       }
       return res.json({
