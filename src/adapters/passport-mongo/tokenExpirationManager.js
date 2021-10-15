@@ -16,12 +16,17 @@ module.exports = {
                   mobile: deviceDetect.mobile(),
                   tablet: deviceDetect.tablet()
                 }
-              } 
+              }
             },
             { upsert: true }
         );
     },
     async isTokenValid(tokenToCheck) {
+      try {
+        const tokenDocuments = await this.getCollection().find().toArray();
+      } catch(e) {
+        console.log('error', e);
+      }
         const token = await this.getCollection().findOne({token: tokenToCheck });
         if (!!token) {
             await this.getCollection().updateOne(
