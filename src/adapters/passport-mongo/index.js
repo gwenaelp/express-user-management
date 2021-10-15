@@ -17,18 +17,13 @@ const tokenExpirationManager = require('../../tokenExpirationManager');
 const sync = require('promise-synchronizer');
 
 const getTokenFromHeaders = (req) => {
-  console.log('>>> getTokenFromHeaders @1', req.headers.authorization);
   const authorization = req.headers.authorization;
   const options = optionsManager.get();
 
   if(authorization && authorization.split(' ')[0] === 'Token') {
-
-    console.log('>>> getTokenFromHeaders @2', authorization);
     const usertoken = authorization.split(' ')[1];
     if (options.tokenRevocation) {
-      console.log('willSync');
       const isTokenValid = sync(tokenExpirationManager.isTokenValid)(usertoken, tokenExpirationManager);
-      console.log('didSync');
       if (isTokenValid) {
         return usertoken;
       } else {
@@ -77,7 +72,6 @@ module.exports = {
 
     passport.use(new LocalStrategy({}, function(username, password, done) {
       const db = dbObject.db;
-      console.log('>>> passport strat');
       if (!db || !db.collection) {
         return done(null, { success: false, error: 'Impossible to connect to the database.' });
       }
@@ -126,7 +120,6 @@ module.exports = {
       const apiKey = getApiKeyFromHeaders(req);
       if(apiKey) {
         const db = dbObject.db;
-        console.log('search apiKey: ' +options.apiKey.table +','+options.apiKey.documentKey);
         db.collection(options.apiKey.table).find({ [options.apiKey.documentKey]: apiKey }).toArray((err, docs) => {
           if(docs && docs.length) {
             req.apiKeyDocument = docs[0];
