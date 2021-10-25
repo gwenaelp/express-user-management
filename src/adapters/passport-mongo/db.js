@@ -1,6 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 
 let db;
+let mongoclient = {};
 
 const dbObject = {
   db: undefined,
@@ -18,7 +19,7 @@ const dbObject = {
           reject(err.toString());
         } else {
           const urlSplit = options.mongoUrl.split('/');
-          const databaseName = urlSplit[urlSplit.length - 1].split('?')[0]
+          const databaseName = urlSplit[urlSplit.length - 1].split('?')[0];
           console.log("Express user management: connected successfully to database", databaseName);
           db = client.db(databaseName);
           dbObject.db = db;

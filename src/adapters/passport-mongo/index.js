@@ -22,16 +22,7 @@ const getTokenFromHeaders = (req) => {
 
   if(authorization && authorization.split(' ')[0] === 'Token') {
     const usertoken = authorization.split(' ')[1];
-    if (options.tokenRevocation) {
-      const isTokenValid = sync(tokenExpirationManager.isTokenValid)(usertoken, tokenExpirationManager);
-      if (isTokenValid) {
-        return usertoken;
-      } else {
-        return null;
-      }
-    } else {
-      return usertoken;
-    }
+    return usertoken;
   }
   return null;
 };
@@ -45,6 +36,7 @@ const getApiKeyFromHeaders = (req) => {
   return null;
 };
 
+
 module.exports = {
   async init(app, options) {
     app.use(passport.initialize());
@@ -52,12 +44,32 @@ module.exports = {
     this.auth.required = (req, res, next) => {
       const authorization = req.headers.authorization;
       if(authorization && authorization.split(' ')[0] === 'Token') {
-        jwt({
+        const jwtCheck = jwt({
           secret: optionsManager.get().jwtSecret,
           userProperty: 'user',
           getToken: getTokenFromHeaders,
           algorithms: ['HS256']
-        })(req, res, next);
+        });
+
+        jwtCheck(req, res, async () => {
+          const authorization = req.headers.authorization;
+          const options = optionsManager.get();
+          if (authorization && authorization.split(' ')[0] === 'Token') {
+            const usertoken = authorization.split(' ')[1];
+            if (options.tokenRevocation) {
+              const isTokenValid = await tokenExpirationManager.isTokenValid(usertoken, tokenExpirationManager);
+              if (isTokenValid) {
+                next();
+              } else {
+                res.status(422).send({ success: false, error: { message: 'User session has expired'} });
+              }
+            } else {
+              next();
+            }
+          } else {
+            res.status(500).send({ success: false, error: { message: 'User token not found' } });
+          }
+        });
       } else if(authorization && authorization.split(' ')[0] === 'apiKey') {
         this.auth.apiKey(req, res, next);
       }
@@ -72,7 +84,7 @@ module.exports = {
 
     passport.use(new LocalStrategy({}, function(username, password, done) {
       const db = dbObject.db;
-      if (!db || !db.collection) {
+      if (!db || !db.collection) {
         return done(null, { success: false, error: 'Impossible to connect to the database.' });
       }
       db.collection(options.usersTable).find({ $or: [{ username:username}, { email:username }] }).toArray((err, user) => {
