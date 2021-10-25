@@ -37,9 +37,12 @@ const createInDb = (user) => {
             activation,
             salt: user.salt,
           };
-
           usersCollection.insertOne(userDocument, (err, newDoc) => {
-            if(err) reject(err);
+            if (err) {
+              console.log('reject', err);
+              reject(err);
+              throw new Error(err);
+            }
             resolve(userDocument);
           });
         }
@@ -98,10 +101,14 @@ module.exports = (req, res, next) => {
           console.error(e);
         }
       }
-      res.json({
+      res.status(200).send({
         success:true,
         user: finalUser.toAuthJSON()
       });
+      return;
     })
-    .catch((err) => res.status(422).json(err));
+    .catch((err) => {
+      console.log('ERR registerRoute', err);
+      res.status(422).send(err);
+    });
 };
