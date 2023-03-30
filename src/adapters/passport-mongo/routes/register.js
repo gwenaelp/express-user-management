@@ -29,7 +29,7 @@ const createInDb = (user) => {
             activation.code = uuidAPIKey.create();
           }
 
-          const userDocument = {
+          let userDocument = {
             email: user.email,
             username: user.username,
             hash: user.hash,
@@ -37,6 +37,9 @@ const createInDb = (user) => {
             activation,
             salt: user.salt,
           };
+          if(options.beforeRegister) {
+            userDocument = options.beforeRegister(userDocument);
+          }
           usersCollection.insertOne(userDocument, (err, newDoc) => {
             if (err) {
               console.log('reject', err);
