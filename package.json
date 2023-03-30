@@ -1,6 +1,6 @@
 {
   "name": "express-user-management",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A ready-to-use express middleware for authentication.",
   "main": "src/index.js",
   "scripts": {
