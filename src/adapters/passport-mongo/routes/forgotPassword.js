@@ -10,33 +10,36 @@ module.exports = (req, res, next) => {
   const options = optionsManager.get();
   async.waterfall([
     (done) => {
-      crypto.randomBytes(20, function(err, buf) {
-        var token = buf.toString('hex');
+      crypto.randomBytes(20, (err, buf) => {
+        const token = buf.toString('hex');
         done(err, token);
       });
     },
-    (token, done) => {
-      db.collection(options.usersTable).find({ email: req.body.email }).toArray((err, docs) => {
-        let user = docs[0];
-        if (!user) {
-          //req.flash('error', 'No account with that email address exists.');
-          console.error('no user found for this email adress');
-          return res.redirect('/forgot');
-        }
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000;
+    async (token, done) => {
+      const docs = await db.collection(options.usersTable).find({ email: req.body.email }).toArray();
+      let user = docs[0];
+      if (!user) {
+        //req.flash('error', 'No account with that email address exists.');
+        console.error('no user found for this email adress');
+        return res.redirect('/forgot');
+      }
+      const operation = {
+        $set: {},
+      };
 
-        db.collection(options.usersTable).update({
-          email: req.body.email
-        }, user, (err, user) => {
-          done(err, token, user);
-        });
-      });
+      operation.$set.resetPasswordToken = token;
+      operation.$set.resetPasswordExpires = Date.now() + 3600000;
+
+      const newUser = await db.collection(options.usersTable).findOneAndUpdate({
+        email: req.body.email
+      }, operation, { returnOriginal: false });
+
+      return { token, user: newUser };
     },
-    async (token, user, done) => {
+    async ({ token, user }, done) => {
       const mailBodyTemplate = Handlebars.compile(options.mails.passwordReset.body);
 
-      var mailOptions = {
+      const mailOptions = {
         to: req.body.email,
         from: options.mails.passwordReset.sender,
         subject: options.mails.passwordReset.subject,

@@ -7,16 +7,14 @@ const MobileDetect = require('mobile-detect');
 module.exports = (req, res, next) => {
   const options = optionsManager.get();
   const user = req.body;
-
   if(!user.username)
     return res.status(422).json({ success: false, error: 'Username is required.' });
 
   if(!user.password)
     return res.status(422).json({ success: false, error: 'Password is required.' });
 
-
   return passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-    if(passportUser && passportUser.success === false) {
+    if(passportUser && passportUser.success === false) {
       return res.status(422).json(passportUser);
     }
     if(err) {

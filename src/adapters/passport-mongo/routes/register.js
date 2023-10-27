@@ -1,3 +1,4 @@
+const dayjs = require('dayjs');
 const Handlebars = require('handlebars');
 const User = require('../../../models/user');
 const db = require('../db');
@@ -36,8 +37,9 @@ const createInDb = (user) => {
             activated,
             activation,
             salt: user.salt,
+            passwordLastChange: dayjs().format('YYYY-MM-DD'),
           };
-          if(options.beforeRegister) {
+          if (options.beforeRegister) {
             userDocument = options.beforeRegister(userDocument);
           }
           usersCollection.insertOne(userDocument, (err, newDoc) => {

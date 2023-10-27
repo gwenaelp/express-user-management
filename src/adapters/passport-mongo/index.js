@@ -82,13 +82,13 @@ module.exports = {
       algorithms: ['HS256']
     });
 
-    passport.use(new LocalStrategy({}, function(username, password, done) {
+    passport.use(new LocalStrategy({}, async (username, password, done) => {
       const db = dbObject.db;
       if (!db || !db.collection) {
         return done(null, { success: false, error: 'Impossible to connect to the database.' });
       }
-      db.collection(options.usersTable).find({ $or: [{ username:username}, { email:username }] }).toArray((err, user) => {
-        if (err) { return done(err); }
+      try {
+        let user = await db.collection(options.usersTable).find({ $or: [{ username:username}, { email:username }] }).toArray();
         if (!user || user.length < 1) { return done(null, { success: false, error: 'Impossible to login with those credentials.' }); }
         if (user[0].activated !== true) { return done(null, { success: false, error: 'User not activated.' }); }
 
@@ -103,7 +103,10 @@ module.exports = {
           console.error('impossible to perform user login :', JSON.stringify(user), e);
           return done(null, { success: false, error: 'Impossible to login with those credentials.' });
         }
-      });
+      } catch(e) {
+        console.error(e);
+        return done(e);
+      }
     }));
 
     await dbObject.init(options);
