@@ -34,7 +34,6 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "^7.12.1",
-    "promise-synchronizer": "^3.0.0",
     "uuid-apikey": "^1.4.2"
   },
   "config": {

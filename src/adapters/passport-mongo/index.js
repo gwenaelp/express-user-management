@@ -14,7 +14,6 @@ const deleteAccountRoute = require('./routes/deleteAccount');
 const optionsManager = require('../../options');
 const generatePassword = require('../../utils/generatePassword');
 const tokenExpirationManager = require('../../tokenExpirationManager');
-const sync = require('promise-synchronizer');
 
 const getTokenFromHeaders = (req) => {
   const authorization = req.headers.authorization;
