@@ -16,6 +16,7 @@ const defaultOptions = {
   activationRequired: true,
   tokensCollection: 'user-token',
   tokenExpirationTime:  1000 * 60 * 60 * 24,
+  prefix: '',
   mails: {
     activation: {
       subject: 'Activate your account!',

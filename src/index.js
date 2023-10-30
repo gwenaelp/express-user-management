@@ -19,16 +19,17 @@ module.exports = {
     const adapter = adapters[options.adapter];
     await adapter.init(expressApp, options);
 
-    expressApp.post('/login', adapter.loginRoute);
-    expressApp.post('/register', adapter.registerRoute);
-    expressApp.get('/activateAccount/:key', adapter.activateAccountRoute);
-    expressApp.post('/forgot', adapter.forgotPasswordRoute);
-    expressApp.post('/resetPassword/:token', adapter.resetPasswordRoute);
-    expressApp.post('/changePassword', adapter.auth.required, adapter.changePasswordRoute);
-    expressApp.post('/deleteAccount', adapter.auth.optional, adapter.deleteAccountRoute);
+    const prefix = options.prefix;
+    expressApp.post(prefix + '/login', adapter.loginRoute);
+    expressApp.post(prefix + '/register', adapter.registerRoute);
+    expressApp.get(prefix + '/activateAccount/:key', adapter.activateAccountRoute);
+    expressApp.post(prefix + '/forgot', adapter.forgotPasswordRoute);
+    expressApp.post(prefix + '/resetPassword/:token', adapter.resetPasswordRoute);
+    expressApp.post(prefix + '/changePassword', adapter.auth.required, adapter.changePasswordRoute);
+    expressApp.post(prefix + '/deleteAccount', adapter.auth.optional, adapter.deleteAccountRoute);
     if (options.tokenRevocation) {
-      expressApp.get('/revokeToken/:token', adapter.auth.required, revokeToken);
-      expressApp.get('/listTokens', adapter.auth.required, listTokens);
+      expressApp.get(prefix + '/revokeToken/:token', adapter.auth.required, revokeToken);
+      expressApp.get(prefix + '/listTokens', adapter.auth.required, listTokens);
     }
     this.auth = adapter.auth;
   },
