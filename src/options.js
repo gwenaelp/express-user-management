@@ -10,6 +10,7 @@ const defaultOptions = {
     documentKey: 'apiKey.apiKey',
   },
   mongoUrl: '',
+  mandatoryRegisterCode: undefined,
   passwordResetAdress: 'http://localhost:30000/resetPassword',
   accountActivationAdress: 'http://localhost:30000/activate',
   nodeMailerConfig: undefined,

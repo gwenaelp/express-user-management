@@ -93,6 +93,8 @@ module.exports = (req, res, next) => {
   if(!user.password)
     return res.status(422).json({ success: false, error: 'Password is required' });
 
+  if(options.mandatoryRegisterCode && user.registerCode !== options.mandatoryRegisterCode)
+    return res.status(422).json({ success: false, error: 'register code is required' });
 
   const finalUser = new User(user);
 
