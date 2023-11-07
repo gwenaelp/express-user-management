@@ -43,7 +43,7 @@ module.exports = (req, res, next) => {
         to: req.body.email,
         from: options.mails.passwordReset.sender,
         subject: options.mails.passwordReset.subject,
-        text: mailBodyTemplate({
+        html: mailBodyTemplate({
           ...options,
           token,
         }),

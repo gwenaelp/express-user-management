@@ -66,7 +66,7 @@ function sendActivationMail(user) {
     to: user.email,
     from: options.mails.activation.sender,
     subject: options.mails.activation.subject,
-    text: mailBodyTemplate({
+    html: mailBodyTemplate({
       options,
       user,
     }),
