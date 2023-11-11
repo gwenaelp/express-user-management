@@ -37,19 +37,19 @@ module.exports = (req, res, next) => {
       return { token, user: newUser };
     },
     async ({ token, user }, done) => {
-      const mailBodyTemplate = Handlebars.compile(options.mails.passwordReset.body);
-
-      const mailOptions = {
-        to: req.body.email,
-        from: options.mails.passwordReset.sender,
-        subject: options.mails.passwordReset.subject,
-        html: mailBodyTemplate({
-          ...options,
-          token,
-        }),
-      };
-
       try {
+        const mailBodyTemplate = Handlebars.compile(options.mails.passwordReset.body);
+
+        const mailOptions = {
+          to: req.body.email,
+          from: options.mails.passwordReset.sender,
+          subject: options.mails.passwordReset.subject,
+          html: mailBodyTemplate({
+            ...options,
+            token,
+          }),
+        };
+
         await mailer.send(mailOptions);
       } catch (e) {
         console.error('forgot password error', e);

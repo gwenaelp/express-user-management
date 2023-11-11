@@ -79,6 +79,23 @@ function sendActivationMail(user) {
   //smtpTransport.sendMail();
 }
 
+
+function isStrongPassword(password) {
+  // Customize the password strength criteria as needed
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+
+  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers;
+}
+
+function isValidEmail(email) {
+  // Use a regular expression to check if the email is valid
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 module.exports = (req, res, next) => {
   const options = optionsManager.get();
 
@@ -95,6 +112,17 @@ module.exports = (req, res, next) => {
 
   if(options.mandatoryRegisterCode && user.registerCode !== options.mandatoryRegisterCode)
     return res.status(422).json({ success: false, error: 'register code is required' });
+
+  if (!isStrongPassword(user.password)) {
+    return res.status(422).json({
+      success: false,
+      error: 'Password is not strong enough. It should be at least 8 characters long and include uppercase letters, lowercase letters, and numbers.',
+    });
+  }
+
+  if (!isValidEmail(user.email)) {
+    return res.status(422).json({ success: false, error: 'Invalid email address' });
+  }
 
   const finalUser = new User(user);
 
